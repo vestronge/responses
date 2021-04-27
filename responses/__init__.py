@@ -379,13 +379,17 @@ class Response(BaseResponse):
         headers=None,
         stream=False,
         content_type=UNSET,
+        json_serializer=None,
         **kwargs
     ):
         # if we were passed a `json` argument,
         # override the body and content_type
         if json is not None:
             assert not body
-            body = json_module.dumps(json)
+            if json_serializer:
+                body = json_serializer(json)
+            else:
+                body = json_module.dumps(json)
             if content_type is UNSET:
                 content_type = "application/json"
 
